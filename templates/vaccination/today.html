@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-container">
+    <h2>Today's Swarnabindu Vaccination Program</h2>
+    <p>Official Hospital Sessions Active Today ({{ today_bs }})</p>
+
+    {% if active_session %}
+    <div class="active-session-banner">
+        <h3>Active Session: {{ active_session.program_name }}</h3>
+        <p>Session BS Date: {{ active_session.session_date_bs }} | Total Registered Vaccinations Today: <strong>{{ today_records|length }}</strong></p>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Patient ID</th>
+                <th>Child Name</th>
+                <th>Age at Vaccination</th>
+                <th>Vitals</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rec in today_records %}
+            <tr>
+                <td><strong>{{ rec.patient.patient_id }}</strong></td>
+                <td>{{ rec.patient.child_name }}</td>
+                <td>{{ rec.age_at_vaccination_str }}</td>
+                <td>{{ rec.height_cm }} cm / {{ rec.weight_kg }} kg / {{ rec.temperature_c }}°C</td>
+                <td><span class="status-badge status-{{ rec.status|lower }}">{{ rec.status }}</span></td>
+                <td>
+                    <a href="{% url 'patient_detail' rec.patient.patient_id %}" class="btn-sm">View Patient</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No vaccinations recorded for today's session yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info">
+        No active vaccination session scheduled for today ({{ today_bs }}).
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

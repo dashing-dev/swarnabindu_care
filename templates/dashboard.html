@@ -1,0 +1,287 @@
+
+{% extends "base.html" %}
+
+
+{% block title %}
+    Dashboard | {{ hospital_setting.hospital_name }}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="dashboard-container">
+
+
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+
+    <div class="page-title">
+
+        <h2>
+            Vaccination Management Dashboard
+        </h2>
+
+        <p>
+            Swarnabindu Drop Management System
+            &nbsp;|&nbsp;
+            मिति: {{ today_bs }}
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         STATISTICS
+         ===================================================== -->
+
+    <div class="stats-grid">
+
+
+        <!-- Total Patients -->
+
+        <div class="stat-card border-blue">
+
+            <h3>
+                Total Registered Patients
+            </h3>
+
+            <div class="stat-value">
+                {{ total_patients }}
+            </div>
+
+        </div>
+
+
+        <!-- Today's Vaccinations -->
+
+        <div class="stat-card border-green">
+
+            <h3>
+                Today's Vaccinations
+            </h3>
+
+            <div class="stat-value">
+                {{ today_vaccinations }}
+            </div>
+
+        </div>
+
+
+        <!-- Today's Session -->
+
+        <div class="stat-card border-amber">
+
+            <h3>
+                Today's Vaccination Session
+            </h3>
+
+
+            <div class="stat-text">
+
+                {% if today_session %}
+
+                    <strong>
+                        {{ today_session.program_name }}
+                    </strong>
+
+                    <br>
+
+                    <span>
+                        Status:
+                        <strong>
+                            {{ today_session.status }}
+                        </strong>
+                    </span>
+
+                {% else %}
+
+                    No vaccination session scheduled for today.
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         QUICK SERVICES
+         ===================================================== -->
+
+    <div class="quick-actions">
+
+
+        <h3>
+            Frequently Used Services
+        </h3>
+
+
+        <div class="action-buttons">
+
+
+            <a
+                href="{% url 'patient_list' %}"
+                class="btn btn-primary"
+            >
+                Search / Find Patient
+            </a>
+
+
+            {% if user_role != 'Report / Read-only User' %}
+
+            <a
+                href="{% url 'patient_register' %}"
+                class="btn btn-success"
+            >
+                Register New Patient
+            </a>
+
+            {% endif %}
+
+
+            <a
+                href="{% url 'today_program' %}"
+                class="btn btn-navy"
+            >
+                Today's Program
+            </a>
+
+
+            <a
+                href="{% url 'daily_session_report' %}"
+                class="btn btn-secondary"
+            >
+                Session & Daily Reports
+            </a>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         UPCOMING SESSIONS
+         ===================================================== -->
+
+    <div class="upcoming-sessions-section">
+
+
+        <h3>
+            Upcoming Vaccination Sessions
+        </h3>
+
+
+        <table class="data-table">
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Program Name
+                    </th>
+
+                    <th>
+                        BS Date
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Action
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+                {% for session in upcoming_sessions %}
+
+
+                <tr>
+
+
+                    <td>
+
+                        <strong>
+                            {{ session.program_name }}
+                        </strong>
+
+                    </td>
+
+
+                    <td>
+
+                        {{ session.session_date_bs }}
+
+                    </td>
+
+
+                    <td>
+
+                        <span
+                            class="status-badge status-{{ session.status|lower }}"
+                        >
+                            {{ session.status }}
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <a
+                            href="{% url 'daily_session_report' %}?session={{ session.id }}"
+                            class="btn-sm"
+                        >
+                            View Report
+                        </a>
+
+                    </td>
+
+
+                </tr>
+
+
+                {% empty %}
+
+
+                <tr>
+
+                    <td colspan="4">
+
+                        No upcoming vaccination sessions have been scheduled.
+
+                    </td>
+
+                </tr>
+
+
+                {% endfor %}
+
+
+            </tbody>
+
+
+        </table>
+
+
+    </div>
+
+
+</div>
+
+{% endblock %}
+

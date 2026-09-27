@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-container">
+    <div class="profile-header">
+        <div>
+            <h2>{{ patient.child_name }} {% if patient.nepali_name %}({{ patient.nepali_name }}){% endif %}</h2>
+            <p class="patient-badge">Patient ID: <strong>{{ patient.patient_id }}</strong></p>
+        </div>
+        <div class="profile-actions">
+            {% if user_role != 'Report / Read-only User' %}
+            <a href="{% url 'vaccination_record' patient.patient_id %}" class="btn btn-success">💉 Record Vaccination Today</a>
+            {% endif %}
+            <a href="{% url 'patient_print_history' patient.patient_id %}" target="_blank" class="btn btn-navy">🖨️ Print Patient History (A4)</a>
+        </div>
+    </div>
+
+    <div class="profile-grid">
+        <div class="card">
+            <h3>Demographics & Guardian Information</h3>
+            <table class="info-table">
+                <tr><th>Sex:</th><td>{{ patient.get_sex_display }}</td></tr>
+                <tr><th>Date of Birth (BS):</th><td>{{ patient.dob_bs }}</td></tr>
+                <tr><th>Current Exact Age:</th><td>{{ patient.current_age_info.formatted }}</td></tr>
+                <tr><th>Guardian Name:</th><td>{{ patient.guardian_name }}</td></tr>
+                <tr><th>Primary Phone:</th><td>{{ patient.phone_number }}</td></tr>
+                <tr><th>Secondary Phone:</th><td>{{ patient.secondary_phone|default:"-" }}</td></tr>
+                <tr><th>Address:</th><td>{{ patient.locality }}, Ward {{ patient.ward }}, {{ patient.municipality }}, {{ patient.district }}</td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>Next Scheduled Session</h3>
+            {% if next_session %}
+                <div class="next-session-box">
+                    <h4>{{ next_session.program_name }}</h4>
+                    <p>📅 Session Date (BS): <strong>{{ next_session.session_date_bs }}</strong></p>
+                    <p>Status: <span class="status-badge status-{{ next_session.status|lower }}">{{ next_session.status }}</span></p>
+                </div>
+            {% else %}
+                <p>No next vaccination session currently linked.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="history-section">
+        <h3>Vaccination History</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Session</th>
+                    <th>Vaccination Date (BS)</th>
+                    <th>Age at Vaccination</th>
+                    <th>Vitals (H / W / BP / Temp)</th>
+                    <th>Status</th>
+                    <th>Next Session Linked</th>
+                    <th>Operator</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vac in vaccinations %}
+                <tr>
+                    <td><strong>{{ vac.vaccination_session.program_name }}</strong></td>
+                    <td>{{ vac.vaccination_date_bs }}</td>
+                    <td>{{ vac.age_at_vaccination_str }}</td>
+                    <td>{{ vac.height_cm }} cm / {{ vac.weight_kg }} kg / {% if vac.bp_systolic %}{{ vac.bp_systolic }}/{{ vac.bp_diastolic }}{% else %}-{% endif %} / {{ vac.temperature_c }}°C</td>
+                    <td><span class="status-badge status-{{ vac.status|lower }}">{{ vac.status }}</span></td>
+                    <td>{{ vac.next_vaccination_session.program_name|default:"None" }}</td>
+                    <td>{{ vac.operator.username|default:"System" }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7">No vaccination history recorded yet for this patient.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

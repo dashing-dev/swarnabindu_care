@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-container">
+    <h2>Register New Patient</h2>
+
+    {% if duplicates %}
+    <div class="duplicate-warning-box">
+        <h3>⚠️ Potential Duplicate Patient Detected!</h3>
+        <p>The following existing child record(s) match the details entered:</p>
+        <ul>
+            {% for dup in duplicates %}
+            <li>
+                <strong>{{ dup.patient_id }}</strong> - {{ dup.child_name }} (Guardian: {{ dup.guardian_name }}, Phone: {{ dup.phone_number }}, DOB BS: {{ dup.dob_bs }})
+                <a href="{% url 'patient_detail' dup.patient_id %}" target="_blank">View Existing Patient</a>
+            </li>
+            {% endfor %}
+        </ul>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="confirm_duplicate" value="1">
+            {% for field in form %}
+                <input type="hidden" name="{{ field.name }}" value="{{ field.value|default:'' }}">
+            {% endfor %}
+            <button type="submit" class="btn btn-warning">Confirm & Create Separate New Patient Record</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <form method="post" class="form-grid">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group col-6">
+                <label>Child Full Name (English) *</label>
+                {{ form.child_name }}
+            </div>
+            <div class="form-group col-6">
+                <label>Child Name (Nepali Script)</label>
+                {{ form.nepali_name }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-4">
+                <label>Sex *</label>
+                {{ form.sex }}
+            </div>
+            <div class="form-group col-4">
+                <label>Date of Birth (BS) *</label>
+                {{ form.dob_bs_input }}
+                {% if form.dob_bs_input.errors %}<div class="field-error">{{ form.dob_bs_input.errors }}</div>{% endif %}
+            </div>
+            <div class="form-group col-4">
+                <label>Parent / Guardian Name *</label>
+                {{ form.guardian_name }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-6">
+                <label>Primary Phone Number (Shared Phone Allowed) *</label>
+                {{ form.phone_number }}
+            </div>
+            <div class="form-group col-6">
+                <label>Secondary Phone Number</label>
+                {{ form.secondary_phone }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-4"><label>Province</label>{{ form.province }}</div>
+            <div class="form-group col-4"><label>District</label>{{ form.district }}</div>
+            <div class="form-group col-4"><label>Municipality / Rural Mun.</label>{{ form.municipality }}</div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-4"><label>Ward No.</label>{{ form.ward }}</div>
+            <div class="form-group col-8"><label>Tole / Village / Locality *</label>{{ form.locality }}</div>
+        </div>
+
+        <div class="form-group">
+            <label>Parent Citizenship / Identification Info</label>
+            {{ form.identification_info }}
+        </div>
+
+        <div class="form-group">
+            <label>Additional Notes</label>
+            {{ form.notes }}
+        </div>
+
+        <button type="submit" class="btn btn-success">Save Patient Registration</button>
+    </form>
+</div>
+{% endblock %}

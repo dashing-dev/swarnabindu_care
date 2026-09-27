@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-container">
+    <div class="page-header-action">
+        <h2>Hospital Vaccination Sessions</h2>
+        {% if user_role == 'Administrator' %}
+        <a href="{% url 'session_create' %}" class="btn btn-success">➕ Create New Session</a>
+        {% endif %}
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Program Name</th>
+                <th>Session Date (BS)</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Created By</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in sessions %}
+            <tr>
+                <td><strong>{{ s.program_name }}</strong></td>
+                <td>{{ s.session_date_bs }}</td>
+                <td>{{ s.session_time|time:"H:i" }}</td>
+                <td><span class="status-badge status-{{ s.status|lower }}">{{ s.status }}</span></td>
+                <td>{{ s.created_by.username|default:"Admin" }}</td>
+                <td>
+                    {% if user_role == 'Administrator' %}
+                    <a href="{% url 'session_change_date' s.id %}" class="btn btn-sm btn-warning">Reschedule Date</a>
+                    {% endif %}
+                    <a href="{% url 'daily_session_report' %}?session={{ s.id }}" class="btn btn-sm btn-navy">View Report</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No vaccination sessions registered.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-container">
+    <h2>Hospital Configuration Settings</h2>
+
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="form-grid">
+        {% csrf_token %}
+        
+        <!-- Render hidden fields -->
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+
+        <!-- Hospital Names -->
+        <div class="form-row">
+            <div class="form-group col-6">
+                <label for="{{ form.hospital_name.id_for_label }}">Hospital English Name</label>
+                {{ form.hospital_name }}
+                {% if form.hospital_name.errors %}
+                    <div class="text-danger small">{{ form.hospital_name.errors|striptags }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group col-6">
+                <label for="{{ form.nepali_hospital_name.id_for_label }}">Hospital Nepali Name</label>
+                {{ form.nepali_hospital_name }}
+                {% if form.nepali_hospital_name.errors %}
+                    <div class="text-danger small">{{ form.nepali_hospital_name.errors|striptags }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Address & Location Info (Province and Ward included) -->
+        <div class="form-row">
+            <div class="form-group col-3">
+                <label for="{{ form.province.id_for_label }}">Province</label>
+                {{ form.province }}
+                {% if form.province.errors %}
+                    <div class="text-danger small">{{ form.province.errors|striptags }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group col-3">
+                <label for="{{ form.district.id_for_label }}">District</label>
+                {{ form.district }}
+                {% if form.district.errors %}
+                    <div class="text-danger small">{{ form.district.errors|striptags }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group col-3">
+                <label for="{{ form.municipality.id_for_label }}">Municipality</label>
+                {{ form.municipality }}
+                {% if form.municipality.errors %}
+                    <div class="text-danger small">{{ form.municipality.errors|striptags }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group col-3">
+                <label for="{{ form.ward.id_for_label }}">Ward No.</label>
+                {{ form.ward }}
+                {% if form.ward.errors %}
+                    <div class="text-danger small">{{ form.ward.errors|striptags }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-12">
+                <label for="{{ form.address.id_for_label }}">Address / Tole</label>
+                {{ form.address }}
+                {% if form.address.errors %}
+                    <div class="text-danger small">{{ form.address.errors|striptags }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="form-row">
+            <div class="form-group col-6">
+                <label for="{{ form.phone.id_for_label }}">Phone</label>
+                {{ form.phone }}
+                {% if form.phone.errors %}
+                    <div class="text-danger small">{{ form.phone.errors|striptags }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group col-6">
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="text-danger small">{{ form.email.errors|striptags }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Logo Upload (If defined in model) -->
+        {% if form.logo %}
+        <div class="form-row">
+            <div class="form-group col-12">
+                <label for="{{ form.logo.id_for_label }}">Hospital Logo</label>
+                {{ form.logo }}
+                {% if form.logo.errors %}
+                    <div class="text-danger small">{{ form.logo.errors|striptags }}</div>
+                {% endif %}
+            </div>
+        </div>
+        {% elif form.hospital_logo %}
+        <div class="form-row">
+            <div class="form-group col-12">
+                <label for="{{ form.hospital_logo.id_for_label }}">Hospital Logo</label>
+                {{ form.hospital_logo }}
+                {% if form.hospital_logo.errors %}
+                    <div class="text-danger small">{{ form.hospital_logo.errors|striptags }}</div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Report Customizations -->
+        <div class="form-group">
+            <label for="{{ form.report_header.id_for_label }}">Report Header Text</label>
+            {{ form.report_header }}
+            {% if form.report_header.errors %}
+                <div class="text-danger small">{{ form.report_header.errors|striptags }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.report_footer.id_for_label }}">Report Footer Text</label>
+            {{ form.report_footer }}
+            {% if form.report_footer.errors %}
+                <div class="text-danger small">{{ form.report_footer.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-success">Save Settings</button>
+    </form>
+</div>
+{% endblock %}

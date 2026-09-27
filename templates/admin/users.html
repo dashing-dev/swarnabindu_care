@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-container">
+    <h2>User & Access Control Management</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role / Groups</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in users %}
+            <tr>
+                <td><strong>{{ u.username }}</strong></td>
+                <td>{{ u.email }}</td>
+                <td>
+                    {% for g in u.groups.all %}
+                        <span class="status-badge status-completed">{{ g.name }}</span>
+                    {% empty %}
+                        <span class="status-badge status-scheduled">Staff User</span>
+                    {% endfor %}
+                </td>
+                <td>{% if u.is_active %}Active{% else %}Disabled{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

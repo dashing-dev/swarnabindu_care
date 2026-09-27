@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-container text-center">
+    <h2>403 - Permission Denied</h2>
+    <p>You do not have administrative privilege to access this government hospital resource.</p>
+    <a href="{% url 'dashboard' %}" class="btn btn-primary">Return to Dashboard</a>
+</div>
+{% endblock %}

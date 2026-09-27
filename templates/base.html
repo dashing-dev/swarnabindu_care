@@ -1,0 +1,309 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+            {{ hospital_setting.hospital_name }}
+        {% endblock %}
+    </title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <header class="app-header">
+
+        <div class="header-brand">
+             <img
+        src="{% static '\images\new-emblem-of-nepal.png' %}"
+        alt="Nepal Government Emblem"
+        class="government-emblem"
+        >
+
+            <div class="logo-text">
+
+                <h1>
+                    {{ hospital_setting.nepali_hospital_name }}
+                </h1>
+
+                <h2>
+                    {{ hospital_setting.hospital_name }}
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="header-info">
+
+            <span class="bs-badge">
+                मिति: {{ today_bs }}
+            </span>
+
+
+            {% if user.is_authenticated %}
+
+                <span class="user-role">
+                    {{ user.username }}
+                    {% if user_role %}
+                        ({{ user_role }})
+                    {% endif %}
+                </span>
+
+
+                <form
+                    action="{% url 'logout' %}"
+                    method="post"
+                    style="display: inline;"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="btn-logout"
+                    >
+                        Logout
+                    </button>
+
+                </form>
+
+            {% else %}
+
+                <a
+                    href="{% url 'login' %}"
+                    class="btn-login"
+                >
+                    Login
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN APPLICATION LAYOUT
+         ===================================================== -->
+
+    <div class="app-layout">
+
+
+        {% if user.is_authenticated %}
+
+        <!-- =================================================
+             SIDEBAR
+             ================================================= -->
+
+        <nav class="app-sidebar">
+
+
+            <!-- Dashboard -->
+
+            <div class="nav-section">
+
+                <a
+                    href="{% url 'dashboard' %}"
+                    class="nav-item"
+                >
+                    Dashboard
+                </a>
+
+            </div>
+
+
+            <!-- Patient Services -->
+
+            <div class="nav-section">
+
+                <h3>
+                    Patient Services
+                </h3>
+
+
+                <a
+                    href="{% url 'patient_list' %}"
+                    class="nav-item"
+                >
+                    Search Patients
+                </a>
+
+
+                {% if user_role != 'Report / Read-only User' %}
+
+                <a
+                    href="{% url 'patient_register' %}"
+                    class="nav-item"
+                >
+                    Register Patient
+                </a>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- Vaccination -->
+
+            <div class="nav-section">
+
+                <h3>
+                    Vaccination Services
+                </h3>
+
+
+                <a
+                    href="{% url 'today_program' %}"
+                    class="nav-item"
+                >
+                    Today's Program
+                </a>
+
+
+                <a
+                    href="{% url 'session_list' %}"
+                    class="nav-item"
+                >
+                    Vaccination Sessions
+                </a>
+
+            </div>
+
+
+            <!-- Reports -->
+
+            <div class="nav-section">
+
+                <h3>
+                    Reports
+                </h3>
+
+
+                <a
+                    href="{% url 'daily_session_report' %}"
+                    class="nav-item"
+                >
+                    Session & Daily Reports
+                </a>
+
+            </div>
+
+
+            <!-- Administration -->
+
+            {% if user_role == 'Administrator' %}
+
+            <div class="nav-section">
+
+                <h3>
+                    Administration
+                </h3>
+
+
+                <a
+                    href="{% url 'hospital_settings' %}"
+                    class="nav-item"
+                >
+                    Hospital Settings
+                </a>
+
+
+                <a
+                    href="{% url 'user_management' %}"
+                    class="nav-item"
+                >
+                    Users & Roles
+                </a>
+
+
+                <a
+                    href="{% url 'audit_log' %}"
+                    class="nav-item"
+                >
+                    Audit Log
+                </a>
+
+
+                <a
+                    href="{% url 'system_health' %}"
+                    class="nav-item"
+                >
+                    System Health & Backup
+                </a>
+
+            </div>
+
+            {% endif %}
+
+
+        </nav>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             MAIN CONTENT
+             ================================================= -->
+
+        <main class="app-content">
+
+
+            <!-- Django Messages -->
+
+            {% if messages %}
+
+            <div class="messages-container">
+
+                {% for message in messages %}
+
+                <div class="alert alert-{{ message.tags }}">
+
+                    {{ message }}
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- Page Content -->
+
+            {% block content %}{% endblock %}
+
+
+        </main>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+         ===================================================== -->
+
+    <script src="{% static 'js/main.js' %}"></script>
+
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>
+

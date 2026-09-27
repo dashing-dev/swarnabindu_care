@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-container">
+    <h2>Official Daily / Vaccination Session Report</h2>
+
+    <form method="get" class="filter-card">
+        <div class="form-row">
+            <div class="form-group col-3">
+                <label>Select Session</label>
+                <select name="session" class="form-select">
+                    <option value="">-- All Sessions --</option>
+                    {% for s in sessions %}
+                    <option value="{{ s.id }}" {% if selected_session.id == s.id %}selected{% endif %}>{{ s.program_name }} ({{ s.session_date_bs }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-3">
+                <label>Sex Filter</label>
+                <select name="sex" class="form-select">
+                    <option value="">-- All --</option>
+                    <option value="M" {% if sex_filter == 'M' %}selected{% endif %}>Male</option>
+                    <option value="F" {% if sex_filter == 'F' %}selected{% endif %}>Female</option>
+                    <option value="O" {% if sex_filter == 'O' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+            <div class="form-group col-3">
+                <label>Status</label>
+                <select name="status" class="form-select">
+                    <option value="">-- All --</option>
+                    <option value="Completed" {% if status_filter == 'Completed' %}selected{% endif %}>Completed</option>
+                    <option value="Missed" {% if status_filter == 'Missed' %}selected{% endif %}>Missed</option>
+                    <option value="Deferred" {% if status_filter == 'Deferred' %}selected{% endif %}>Deferred</option>
+                </select>
+            </div>
+            <div class="form-group col-3" style="display:flex; align-items:flex-end;">
+                <button type="submit" class="btn btn-primary btn-block">Apply Report Filters</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="report-summary-grid">
+        <div class="summary-card">
+            <h4>Total Vaccinated</h4>
+            <div class="num">{{ report_data.total_patients }}</div>
+        </div>
+        <div class="summary-card">
+            <h4>Sex Breakdown</h4>
+            <p>Male: <strong>{{ report_data.male_count }}</strong> | Female: <strong>{{ report_data.female_count }}</strong> | Other: <strong>{{ report_data.other_sex_count }}</strong></p>
+        </div>
+        <div class="summary-card">
+            <h4>Patient Flow</h4>
+            <p>New Patients: <strong>{{ report_data.new_patients_count }}</strong> | Returning: <strong>{{ report_data.returning_patients_count }}</strong></p>
+        </div>
+    </div>
+
+    <h3>Age Breakdown at Vaccination</h3>
+    <div class="age-grid">
+        {% for group, count in report_data.age_group_counts.items %}
+        <div class="age-card">
+            <span class="age-label">{{ group }}</span>
+            <span class="age-val">{{ count }}</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h3 style="margin-top:25px;">Detailed Vaccination Log</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Patient ID</th>
+                <th>Child Name</th>
+                <th>Sex</th>
+                <th>Age at Vaccination</th>
+                <th>Vitals</th>
+                <th>Status</th>
+                <th>Session</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rec in report_data.records %}
+            <tr>
+                <td>{{ rec.patient.patient_id }}</td>
+                <td>{{ rec.patient.child_name }}</td>
+                <td>{{ rec.patient.get_sex_display }}</td>
+                <td>{{ rec.age_at_vaccination_str }}</td>
+                <td>{{ rec.height_cm }}cm / {{ rec.weight_kg }}kg / {{ rec.temperature_c }}°C</td>
+                <td><span class="status-badge status-{{ rec.status|lower }}">{{ rec.status }}</span></td>
+                <td>{{ rec.vaccination_session.program_name }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7">No vaccination records match selected report parameters.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

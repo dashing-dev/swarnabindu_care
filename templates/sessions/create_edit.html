@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-container">
+    <h2>{{ title }}</h2>
+    <form method="post" class="form-grid">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Program Name *</label>
+            {{ form.program_name }}
+        </div>
+        <div class="form-row">
+            <div class="form-group col-6">
+                <label>Official Session Date (BS) *</label>
+                {{ form.session_date_bs }}
+                {% if form.session_date_bs.errors %}<div class="field-error">{{ form.session_date_bs.errors }}</div>{% endif %}
+            </div>
+            <div class="form-group col-6">
+                <label>Session Time *</label>
+                {{ form.session_time }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Status</label>
+            {{ form.status }}
+        </div>
+        <div class="form-group">
+            <label>Notes</label>
+            {{ form.notes }}
+        </div>
+        <button type="submit" class="btn btn-success">Save Session</button>
+    </form>
+</div>
+{% endblock %}

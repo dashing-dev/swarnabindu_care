@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-container">
+    <h2>Record Swarnabindu Vaccination</h2>
+    <div class="patient-summary-box">
+        <h3>Patient: {{ patient.child_name }} ({{ patient.patient_id }})</h3>
+        <p>DOB (BS): <strong>{{ patient.dob_bs }}</strong> | Calculated Age Today: <strong>{{ calculated_age.formatted }}</strong></p>
+    </div>
+
+    <form method="post" class="form-grid">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Select Official Vaccination Session *</label>
+            {{ form.vaccination_session }}
+            {% if form.vaccination_session.errors %}<div class="field-error">{{ form.vaccination_session.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-3">
+                <label>Height (cm) *</label>
+                {{ form.height_cm }}
+                {% if form.height_cm.errors %}<div class="field-error">{{ form.height_cm.errors }}</div>{% endif %}
+            </div>
+            <div class="form-group col-3">
+                <label>Weight (kg) *</label>
+                {{ form.weight_kg }}
+                {% if form.weight_kg.errors %}<div class="field-error">{{ form.weight_kg.errors }}</div>{% endif %}
+            </div>
+            <div class="form-group col-3">
+                <label>Systolic BP (mmHg)</label>
+                {{ form.bp_systolic }}
+            </div>
+            <div class="form-group col-3">
+                <label>Diastolic BP (mmHg)</label>
+                {{ form.bp_diastolic }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-6">
+                <label>Body Temperature (°C) *</label>
+                {{ form.temperature_c }}
+                {% if form.temperature_c.errors %}<div class="field-error">{{ form.temperature_c.errors }}</div>{% endif %}
+            </div>
+            <div class="form-group col-6">
+                <label>Vaccination Status *</label>
+                {{ form.status }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Select Next Vaccination Session (Predefined Hospital Session) *</label>
+            {{ form.next_vaccination_session }}
+            <small>Note: Select from officially scheduled hospital vaccination sessions.</small>
+        </div>
+
+        <div class="form-group">
+            <label>Clinical Notes</label>
+            {{ form.notes }}
+        </div>
+
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-success">Save Vaccination Record</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-container">
+    <h2>System Audit Trail</h2>
+
+    <h3>Session Date Change Audit History</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Session</th>
+                <th>Old Date (BS)</th>
+                <th>New Date (BS)</th>
+                <th>Reason</th>
+                <th>Changed By</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for audit in date_audits %}
+            <tr>
+                <td>{{ audit.timestamp|date:"Y-m-d H:i" }}</td>
+                <td>{{ audit.session.program_name }}</td>
+                <td>{{ audit.old_date }}</td>
+                <td>{{ audit.new_date }}</td>
+                <td>{{ audit.reason }}</td>
+                <td>{{ audit.changed_by.username|default:"System" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No session date modifications recorded.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3 style="margin-top: 30px;">General System Action Logs</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>User</th>
+                <th>Action</th>
+                <th>Object</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.timestamp|date:"Y-m-d H:i" }}</td>
+                <td>{{ log.user.username|default:"System" }}</td>
+                <td><strong>{{ log.action }}</strong></td>
+                <td>{{ log.object_type }} #{{ log.object_id }}</td>
+                <td>{{ log.description }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">No system audit logs found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

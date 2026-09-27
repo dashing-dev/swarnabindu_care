@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-container">
+    <h2>System Health & Database Backup</h2>
+
+    <div class="stats-grid">
+        <div class="stat-card border-blue">
+            <h3>Database Status</h3>
+            <p><strong>{{ db_status }}</strong></p>
+        </div>
+        <div class="stat-card border-green">
+            <h3>Total Database Records</h3>
+            <p>Patients: {{ total_patients }} | Vaccinations: {{ total_records }}</p>
+        </div>
+        <div class="stat-card border-amber">
+            <h3>Latest Backup</h3>
+            <p>{% if latest_backup %}{{ latest_backup.filename }} ({{ latest_backup.timestamp|date:"Y-m-d H:i" }}){% else %}No backups recorded{% endif %}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
